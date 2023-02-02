@@ -96,13 +96,15 @@ window.addEventListener('DOMContentLoaded', () => {
           modal = document.querySelector('.modal'),
           modalCloseBtn = document.querySelector('[data-close]');
 
-        modalTrigger.forEach(btn => {
-            btn.addEventListener('click', function() {
-                modal.classList.add('show');
-                modal.classList.remove('hide');
-                document.body.style.overflow = 'hidden'; //stop scroll
-            });
-        });
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden'; //stop scroll
+        clearInterval(modalTimerId); //если пользователь открыл кнопкой модальное окно, отменяется автоматическое открытие через интервал
+    }
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', openModal);
+    });
     
     function closeModal() {
         modal.classList.add('hide');
@@ -125,6 +127,17 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }
     });
+
+    const modalTimerId = setTimeout(openModal, 50000);
+
+    function showeModalByScroll() {
+        if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', showeModalByScroll); //прекращает работу функции после первого скрода в низ страницы
+        }
+    }
+
+    window.addEventListener('scroll', showeModalByScroll);
 });
 
 
